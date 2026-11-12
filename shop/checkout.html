@@ -90,7 +90,6 @@
     if (!codOk && state.method === 'cod') state.method = 'gcash';
     var defs = [
       { v: 'gcash', t: 'GCash (demo)', d: 'You get a fake payment page. No real money.' },
-      { v: 'bank', t: 'Bank transfer (demo)', d: 'Demo bank details are sent after the order.' },
       { v: 'cod', t: 'Cash on delivery', d: codOk ? 'Pay the rider. No extra fee.' : 'Only for orders up to ' + RF.peso(RF.COD_MAX) + '.', off: !codOk }
     ];
     els.methods.textContent = '';
@@ -149,7 +148,7 @@
     var ref = 'RF-' + (1024 + Math.floor(Math.random() * 8900));
     var amt = total();
     var method = state.method;
-    var methodLabel = { gcash: 'GCash (demo)', bank: 'Bank transfer (demo)', cod: 'Cash on delivery' }[method];
+    var methodLabel = { gcash: 'GCash (demo)', cod: 'Cash on delivery' }[method];
     try {
       // Only the reference, amount and method are kept. No name, phone or address is stored.
       localStorage.setItem(ORDER_KEY, JSON.stringify({ ref: ref, amount: amt, method: method, at: new Date().toISOString() }));
@@ -163,7 +162,7 @@
     root.appendChild(RF.el('div', { class: 'panel' },
       RF.el('h2', { text: 'Order placed (demo)' }),
       RF.el('p', { text: 'Order reference ' + ref + ', total ' + RF.peso(amt) + ', ' + methodLabel + '.' }),
-      RF.el('p', { class: 'note', text: method === 'cod' ? 'You would pay the rider on delivery.' : 'In a real shop, bank details would be sent next. This is a demo, so nothing happens.' }),
+      RF.el('p', { class: 'note', text: 'You would pay the rider on delivery. This is a demo, so nothing happens.' }),
       RF.el('a', { class: 'btn', href: 'index.html', text: 'Back to the shop' })));
   }
 })();
