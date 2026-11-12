@@ -7,10 +7,15 @@
       "id": "rf-001",
       "name": "GaN Fast Charger 65W",
       "price": 899,
-      "compare_price": 1199,
       "variants": [
-        { "name": "White", "stock": 18 },
-        { "name": "Black", "stock": 22 }
+        {
+          "name": "White",
+          "stock": 18
+        },
+        {
+          "name": "Black",
+          "stock": 22
+        }
       ],
       "stock": 40,
       "short_desc": "A compact 65W wall charger with two USB-C ports and one USB-A port. Small enough for a laptop bag.",
@@ -19,7 +24,7 @@
         "Two USB-C ports and one USB-A port",
         "Folding plug, about the size of a deck of cards"
       ],
-      "shipping_note": "Ships in 1-2 working days. Cable not included.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM). Cable not included.",
       "image": "img/rf-001.jpg",
       "url": "product.html?id=rf-001"
     },
@@ -27,10 +32,15 @@
       "id": "rf-002",
       "name": "Magnetic Power Bank 10,000mAh",
       "price": 1499,
-      "compare_price": 1899,
       "variants": [
-        { "name": "Grey", "stock": 12 },
-        { "name": "Sage Green", "stock": 9 }
+        {
+          "name": "Grey",
+          "stock": 12
+        },
+        {
+          "name": "Sage Green",
+          "stock": 9
+        }
       ],
       "stock": 21,
       "short_desc": "A slim 10,000mAh power bank that snaps onto magnet-ready phones. Also has a USB-C cable port for faster charging.",
@@ -39,7 +49,7 @@
         "Magnetic wireless pad works with magnet-ready phones only",
         "USB-C port for wired charging and for recharging the bank"
       ],
-      "shipping_note": "Ships in 1-2 working days. Power banks travel by land courier only.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM). Power banks travel by land courier only.",
       "image": "img/rf-002.jpg",
       "url": "product.html?id=rf-002"
     },
@@ -47,7 +57,6 @@
       "id": "rf-003",
       "name": "USB-C Hub 7-in-1",
       "price": 1899,
-      "compare_price": 2499,
       "variants": [],
       "stock": 15,
       "short_desc": "One USB-C plug turns into HDMI, two USB-A ports, an SD slot, a microSD slot and a USB-C charging port.",
@@ -56,7 +65,7 @@
         "Two USB-A ports, SD and microSD card readers",
         "USB-C pass-through charging up to 85W"
       ],
-      "shipping_note": "Ships in 1-2 working days.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM).",
       "image": "img/rf-003.jpg",
       "url": "product.html?id=rf-003"
     },
@@ -64,10 +73,15 @@
       "id": "rf-004",
       "name": "Wireless Earbuds Lite",
       "price": 1799,
-      "compare_price": 2299,
       "variants": [
-        { "name": "Black", "stock": 14 },
-        { "name": "White", "stock": 0 }
+        {
+          "name": "Black",
+          "stock": 14
+        },
+        {
+          "name": "White",
+          "stock": 0
+        }
       ],
       "stock": 14,
       "short_desc": "Everyday Bluetooth earbuds with a pocket charging case. Good for calls, podcasts and commuting.",
@@ -76,7 +90,7 @@
         "About 6 hours per charge, about 24 hours with the case",
         "Touch controls for play, pause and calls"
       ],
-      "shipping_note": "Ships in 1-2 working days. White is currently sold out.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM).",
       "image": "img/rf-004.jpg",
       "url": "product.html?id=rf-004"
     },
@@ -84,9 +98,11 @@
       "id": "rf-005",
       "name": "Phone Tripod with Remote",
       "price": 549,
-      "compare_price": 749,
       "variants": [
-        { "name": "Black", "stock": 30 }
+        {
+          "name": "Black",
+          "stock": 30
+        }
       ],
       "stock": 30,
       "short_desc": "A foldable tabletop and floor tripod with a phone clamp and a small Bluetooth shutter remote.",
@@ -95,7 +111,7 @@
         "Clamp fits most phones, with or without a thin case",
         "Bluetooth remote for photos and video start/stop"
       ],
-      "shipping_note": "Ships in 1-2 working days.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM).",
       "image": "img/rf-005.jpg",
       "url": "product.html?id=rf-005"
     },
@@ -103,10 +119,15 @@
       "id": "rf-006",
       "name": "Cable Organiser Kit (12 pieces)",
       "price": 349,
-      "compare_price": 449,
       "variants": [
-        { "name": "Mixed colours", "stock": 60 },
-        { "name": "All black", "stock": 45 }
+        {
+          "name": "Mixed colours",
+          "stock": 60
+        },
+        {
+          "name": "All black",
+          "stock": 45
+        }
       ],
       "stock": 105,
       "short_desc": "Reusable cable ties, clips and sleeves to tidy a desk or a travel pouch.",
@@ -115,7 +136,7 @@
         "Reusable hook-and-loop ties",
         "Adhesive clips hold on smooth, clean surfaces"
       ],
-      "shipping_note": "Ships in 1-2 working days.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM).",
       "image": "img/rf-006.jpg",
       "url": "product.html?id=rf-006"
     },
@@ -123,7 +144,6 @@
       "id": "rf-007",
       "name": "Foldable Laptop Stand",
       "price": 799,
-      "compare_price": 999,
       "variants": [],
       "stock": 3,
       "short_desc": "An aluminium laptop stand that folds flat for a bag and raises your screen to a more comfortable height.",
@@ -132,7 +152,7 @@
         "Six height settings",
         "Folds flat to about 1.5cm thick"
       ],
-      "shipping_note": "Only 3 left in stock. Ships in 1-2 working days.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM).",
       "image": "img/rf-007.jpg",
       "url": "product.html?id=rf-007"
     },
@@ -140,10 +160,15 @@
       "id": "rf-008",
       "name": "LED Desk Lamp with Dimmer",
       "price": 1299,
-      "compare_price": 1599,
       "variants": [
-        { "name": "White", "stock": 10 },
-        { "name": "Black", "stock": 8 }
+        {
+          "name": "White",
+          "stock": 10
+        },
+        {
+          "name": "Black",
+          "stock": 8
+        }
       ],
       "stock": 18,
       "short_desc": "A clamp-on LED desk lamp with three colour temperatures and a dimmer. USB powered.",
@@ -152,7 +177,7 @@
         "Five brightness levels",
         "Clamp fits desks up to about 5cm thick"
       ],
-      "shipping_note": "Ships in 1-2 working days. USB adapter not included.",
+      "shipping_note": "Dispatched within 1-2 working days (next working day if paid or confirmed by 3:00 PM). USB adapter not included.",
       "image": "img/rf-008.jpg",
       "url": "product.html?id=rf-008"
     }

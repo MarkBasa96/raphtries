@@ -30,8 +30,7 @@
     grid.textContent = '';
     products.forEach(function (p, i) {
       var price = RF.el('div', { class: 'price-row' },
-        RF.el('span', { class: 'price', text: RF.peso(p.price) }),
-        p.compare_price > p.price ? RF.el('span', { class: 'compare', text: RF.peso(p.compare_price) }) : null);
+        RF.el('span', { class: 'price', text: RF.peso(p.price) }));
       var body = RF.el('div', { class: 'card-body' },
         RF.el('span', { class: 'card-name', text: p.name }), price, RF.stockBadge(p));
       grid.appendChild(RF.el('a', { class: 'card', href: p.url }, RF.media(p, i), body));
