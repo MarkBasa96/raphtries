@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart - Raph Finds (demo)</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+</head>
+<body>
+<div class="demo-banner">Demo store - no real payments</div>
+<header class="site-header">
+  <a class="brand" href="index.html">Raph <span>Finds</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Shop</a>
+    <a href="cart.html">Cart<span class="cart-count" data-cart-count data-empty="true">0</span></a>
+  </nav>
+</header>
+<main>
+  <h1>Your cart</h1>
+  <div id="root" aria-live="polite"><p class="note">Loading...</p></div>
+</main>
+<script>
+(function () {
+  var root = document.getElementById('root');
+  var products = [];
+  RF.loadProducts().then(function (p) { products = p; render(); }).catch(function () { RF.showLoadError(root); });
+
+  function change(id, variant, delta) {
+    var cart = RF.getCart();
+    cart.forEach(function (l) {
+      if (l.id === id && l.variant === variant) {
+        var p = products.filter(function (x) { return x.id === id; })[0];
+        var max = p ? Math.min(10, RF.variantStock(p, variant)) : 10;
+        l.qty = Math.max(1, Math.min(l.qty + delta, max || 1));
+      }
+    });
+    RF.saveCart(cart); render();
+  }
+  function remove(id, variant) {
+    RF.saveCart(RF.getCart().filter(function (l) { return !(l.id === id && l.variant === variant); }));
+    render();
+  }
+
+  function render() {
+    var lines = RF.pricedLines(products);
+    root.textContent = '';
+    if (!lines.length) {
+      root.appendChild(RF.el('div', { class: 'empty' },
+        RF.el('p', { text: 'Your cart is empty.' }),
+        RF.el('a', { class: 'btn', href: 'index.html', text: 'Browse products' })));
+      return;
+    }
+    var list = RF.el('div', { class: 'panel' });
+    lines.forEach(function (l, i) {
+      var p = l.product;
+      var minus = RF.el('button', { type: 'button', 'aria-label': 'Decrease quantity', text: '−', onclick: function () { change(p.id, l.variant, -1); } });
+      var plus = RF.el('button', { type: 'button', 'aria-label': 'Increase quantity', text: '+', onclick: function () { change(p.id, l.variant, 1); } });
+      list.appendChild(RF.el('div', { class: 'line' },
+        RF.media(p, i),
+        RF.el('div', null,
+          RF.el('div', { class: 'line-name' }, RF.el('a', { href: p.url, text: p.name })),
+          RF.el('div', { class: 'line-meta', text: (l.variant ? l.variant + ' · ' : '') + RF.peso(p.price) + ' each' }),
+          l.soldOut ? RF.el('div', { class: 'badge out', text: 'Sold out - will not be charged' }) : null,
+          RF.el('div', { class: 'line-actions' },
+            RF.el('div', { class: 'qty' }, minus, RF.el('output', { text: String(l.qty) }), plus),
+            RF.el('button', { class: 'link-btn', type: 'button', text: 'Remove', onclick: function () { remove(p.id, l.variant); } }))),
+        RF.el('div', { class: 'line-price', text: l.soldOut ? '-' : RF.peso(p.price * l.qty) })));
+    });
+    var sub = RF.subtotal(lines);
+    var summary = RF.el('div', { class: 'panel' },
+      RF.el('div', { class: 'sum-row' }, RF.el('span', { text: 'Subtotal' }), RF.el('span', { text: RF.peso(sub) })),
+      RF.el('p', { class: 'note', text: 'Shipping and vouchers are worked out at checkout. Free shipping from ' + RF.peso(RF.SHIPPING.freeAt) + '.' }),
+      sub > 0 ? RF.el('a', { class: 'btn block', href: 'checkout.html', text: 'Checkout (demo)' }) : RF.el('button', { class: 'btn block', disabled: true, text: 'Nothing to check out' }));
+    root.appendChild(RF.el('div', { class: 'layout two' }, list, summary));
+  }
+})();
+</script>
+<footer class="site-footer">
+  Raph Finds is a mock shop built for a sales demo. Products, prices, policies and payments are invented. Nothing you enter here is sent anywhere.
+</footer>
+</body>
+</html>

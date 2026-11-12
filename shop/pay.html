@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCash (demo) payment - Raph Finds</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+</head>
+<body>
+<div class="demo-banner">Demo store - no real payments</div>
+<header class="site-header">
+  <a class="brand" href="index.html">Raph <span>Finds</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Shop</a>
+    <a href="cart.html">Cart<span class="cart-count" data-cart-count data-empty="true">0</span></a>
+  </nav>
+</header>
+<main>
+  <div class="pay-wrap">
+    <!-- Step 1: payment screen -->
+    <section class="gcash-card" id="pay-card" aria-label="GCash demo payment">
+      <div class="gcash-head"><strong>GCash (demo)</strong><small>Demo only</small></div>
+      <div class="gcash-body">
+        <div class="note">Amount to pay</div>
+        <div class="pay-amount" id="amount"></div>
+        <div class="kv"><span>Merchant</span><span>Raph Finds (demo shop)</span></div>
+        <div class="kv"><span>Order reference</span><span id="order-ref"></span></div>
+        <button class="btn gcash block" type="button" id="pay-btn">Pay now (demo)</button>
+        <p class="note" style="margin:0.75rem 0 0">No real money moves. This page is a fake made for a sales demo.</p>
+      </div>
+    </section>
+
+    <!-- Step 2: receipt card, sized so it screenshots cleanly -->
+    <section class="receipt" id="receipt" aria-label="Demo payment receipt" hidden>
+      <div class="gcash-head"><strong>GCash (demo)</strong><small>Demo only</small></div>
+      <div class="receipt-ok">
+        <div class="tick" aria-hidden="true">&#10003;</div>
+        <h2>Payment received</h2>
+        <div class="note">Demo receipt, not a real transaction</div>
+      </div>
+      <div class="gcash-body">
+        <div class="pay-amount" id="r-amount" style="text-align:center"></div>
+        <div class="kv"><span>Merchant</span><span>Raph Finds (demo shop)</span></div>
+        <div class="kv"><span>Order ref</span><span id="r-ref"></span></div>
+        <div class="kv"><span>Date</span><span id="r-date"></span></div>
+        <div class="kv"><span>Transaction ref</span><span id="r-txn"></span></div>
+        <div class="kv"><span>Paid with</span><span>GCash (demo)</span></div>
+      </div>
+      <div class="receipt-foot">Demo store - no real payments</div>
+    </section>
+    <p style="text-align:center;margin-top:1rem" id="after" hidden><a href="index.html">Back to the shop</a></p>
+  </div>
+</main>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var order = (q.get('order') || '').trim();
+  var amt = Number(q.get('amt'));
+  // Safe defaults so the page always shows something sensible for screenshots.
+  if (!/^[A-Za-z0-9-]{3,20}$/.test(order)) order = 'RF-1023';
+  if (!isFinite(amt) || amt <= 0 || amt > 1000000) amt = 1299;
+  amt = Math.round(amt * 100) / 100;
+  var amtText = '₱' + amt.toLocaleString('en-PH', { minimumFractionDigits: amt % 1 ? 2 : 0, maximumFractionDigits: 2 });
+
+  function $(id) { return document.getElementById(id); }
+  $('amount').textContent = amtText;
+  $('order-ref').textContent = order;
+
+  $('pay-btn').addEventListener('click', function () {
+    var now = new Date();
+    var date;
+    try {
+      date = now.toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Manila' });
+    } catch (e) { date = now.toLocaleString(); }
+    var digits = '';
+    for (var i = 0; i < 10; i++) digits += Math.floor(Math.random() * 10);
+    $('r-amount').textContent = amtText;
+    $('r-ref').textContent = order;
+    $('r-date').textContent = date;
+    $('r-txn').textContent = 'DEMO-' + digits;
+    $('pay-card').hidden = true;
+    $('receipt').hidden = false;
+    $('after').hidden = false;
+    window.scrollTo(0, 0);
+  });
+})();
+</script>
+<footer class="site-footer">
+  Raph Finds is a mock shop built for a sales demo. Products, prices, policies and payments are invented. Nothing you enter here is sent anywhere.
+</footer>
+</body>
+</html>

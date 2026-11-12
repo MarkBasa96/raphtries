@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raph Finds (demo)</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+</head>
+<body>
+<div class="demo-banner">Demo store - no real payments</div>
+<header class="site-header">
+  <a class="brand" href="index.html">Raph <span>Finds</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Shop</a>
+    <a href="cart.html">Cart<span class="cart-count" data-cart-count data-empty="true">0</span></a>
+  </nav>
+</header>
+<main>
+  <section class="intro">
+    <h1>Desk and travel gadgets</h1>
+    <p>A small, honest catalogue. Prices in Philippine pesos. Free shipping from &#8369;1,500.</p>
+  </section>
+  <div class="grid" id="grid" aria-live="polite"><p class="note">Loading products...</p></div>
+</main>
+<script>
+(function () {
+  var grid = document.getElementById('grid');
+  RF.loadProducts().then(function (products) {
+    grid.textContent = '';
+    products.forEach(function (p, i) {
+      var price = RF.el('div', { class: 'price-row' },
+        RF.el('span', { class: 'price', text: RF.peso(p.price) }),
+        p.compare_price > p.price ? RF.el('span', { class: 'compare', text: RF.peso(p.compare_price) }) : null);
+      var body = RF.el('div', { class: 'card-body' },
+        RF.el('span', { class: 'card-name', text: p.name }), price, RF.stockBadge(p));
+      grid.appendChild(RF.el('a', { class: 'card', href: p.url }, RF.media(p, i), body));
+    });
+  }).catch(function () { RF.showLoadError(grid); });
+})();
+</script>
+<footer class="site-footer">
+  Raph Finds is a mock shop built for a sales demo. Products, prices, policies and payments are invented. Nothing you enter here is sent anywhere.
+</footer>
+</body>
+</html>

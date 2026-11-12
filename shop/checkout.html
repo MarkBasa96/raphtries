@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout - Raph Finds (demo)</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js"></script>
+</head>
+<body>
+<div class="demo-banner">Demo store - no real payments</div>
+<header class="site-header">
+  <a class="brand" href="index.html">Raph <span>Finds</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Shop</a>
+    <a href="cart.html">Cart<span class="cart-count" data-cart-count data-empty="true">0</span></a>
+  </nav>
+</header>
+<main>
+  <h1>Checkout</h1>
+  <p class="note">Demo only. The name, phone and address you type here are never saved or sent anywhere. Use made-up details.</p>
+  <div id="root" aria-live="polite"><p class="note">Loading...</p></div>
+</main>
+<script>
+(function () {
+  var root = document.getElementById('root');
+  var ORDER_KEY = 'rf_demo_last_order_v1';
+  var state = { lines: [], sub: 0, region: 'metro', discount: 0, method: 'gcash', voucherMsg: null };
+
+  RF.loadProducts().then(function (products) {
+    state.lines = RF.pricedLines(products).filter(function (l) { return !l.soldOut; });
+    state.sub = RF.subtotal(state.lines);
+    if (!state.lines.length) {
+      root.textContent = '';
+      root.appendChild(RF.el('div', { class: 'empty' },
+        RF.el('p', { text: 'Your cart is empty, so there is nothing to check out.' }),
+        RF.el('a', { class: 'btn', href: 'index.html', text: 'Browse products' })));
+      return;
+    }
+    build();
+  }).catch(function () { RF.showLoadError(root); });
+
+  function shipping() {
+    if (state.sub - state.discount >= RF.SHIPPING.freeAt) return 0;
+    return state.region === 'metro' ? RF.SHIPPING.metro : RF.SHIPPING.province;
+  }
+  function total() { return state.sub - state.discount + shipping(); }
+
+  var els = {};
+  function build() {
+    els.name = RF.el('input', { type: 'text', id: 'f-name', name: 'name', required: true, autocomplete: 'off', placeholder: 'Demo Customer' });
+    els.phone = RF.el('input', { type: 'tel', id: 'f-phone', name: 'phone', required: true, autocomplete: 'off', placeholder: '09XX XXX XXXX', pattern: '[0-9 +()-]{7,20}', title: 'Digits, spaces and + only' });
+    els.address = RF.el('textarea', { id: 'f-address', name: 'address', rows: '3', required: true, autocomplete: 'off', placeholder: 'Street, barangay, city' });
+    els.region = RF.el('select', { id: 'f-region', name: 'region', onchange: function () { state.region = els.region.value; refreshSummary(); } },
+      RF.el('option', { value: 'metro', text: 'Metro Manila (' + RF.peso(RF.SHIPPING.metro) + ')' }),
+      RF.el('option', { value: 'province', text: 'Provinces (' + RF.peso(RF.SHIPPING.province) + ')' }));
+    els.voucher = RF.el('input', { type: 'text', id: 'f-voucher', name: 'voucher', autocomplete: 'off', placeholder: 'e.g. WELCOME50' });
+    els.voucherMsg = RF.el('div', { class: 'voucher-msg' });
+    els.summary = RF.el('div', { class: 'panel' });
+    els.methods = RF.el('div', { class: 'radio-list' });
+    els.err = RF.el('div', { class: 'error-box', hidden: true, role: 'alert' });
+
+    var form = RF.el('form', { id: 'order-form', novalidate: false, onsubmit: submit },
+      RF.el('div', { class: 'panel' },
+        RF.el('h2', { text: 'Delivery details' }),
+        RF.el('div', { class: 'field' }, RF.el('label', { for: 'f-name', text: 'Full name' }), els.name),
+        RF.el('div', { class: 'field' }, RF.el('label', { for: 'f-phone', text: 'Mobile number' }), els.phone),
+        RF.el('div', { class: 'field' }, RF.el('label', { for: 'f-address', text: 'Delivery address' }), els.address),
+        RF.el('div', { class: 'field' }, RF.el('label', { for: 'f-region', text: 'Where is it going?' }), els.region)),
+      RF.el('div', { class: 'panel', style: 'margin-top:1rem' },
+        RF.el('h2', { text: 'Payment' }), els.methods),
+      RF.el('div', { class: 'panel', style: 'margin-top:1rem' },
+        RF.el('h2', { text: 'Voucher' }),
+        RF.el('div', { class: 'voucher-row' }, els.voucher,
+          RF.el('button', { class: 'btn secondary', type: 'button', text: 'Apply', onclick: applyVoucher })),
+        els.voucherMsg),
+      els.err);
+
+    var side = RF.el('div', null, els.summary,
+      RF.el('button', { class: 'btn block', type: 'submit', form: 'order-form', style: 'margin-top:1rem', text: 'Place order (demo)' }));
+    root.textContent = '';
+    root.appendChild(RF.el('div', { class: 'layout two' }, form, side));
+    refreshMethods();
+    refreshSummary();
+  }
+
+  function refreshMethods() {
+    var t = total();
+    var codOk = t <= RF.COD_MAX;
+    if (!codOk && state.method === 'cod') state.method = 'gcash';
+    var defs = [
+      { v: 'gcash', t: 'GCash (demo)', d: 'You get a fake payment page. No real money.' },
+      { v: 'bank', t: 'Bank transfer (demo)', d: 'Demo bank details are sent after the order.' },
+      { v: 'cod', t: 'Cash on delivery', d: codOk ? 'Pay the rider. No extra fee.' : 'Only for orders up to ' + RF.peso(RF.COD_MAX) + '.', off: !codOk }
+    ];
+    els.methods.textContent = '';
+    defs.forEach(function (m) {
+      var input = RF.el('input', { type: 'radio', name: 'method', value: m.v, checked: state.method === m.v, disabled: !!m.off,
+        onchange: function () { state.method = m.v; } });
+      els.methods.appendChild(RF.el('label', { class: m.off ? 'disabled' : '' }, input,
+        RF.el('span', null, RF.el('strong', { text: m.t }), m.d)));
+    });
+  }
+
+  function refreshSummary() {
+    var s = els.summary;
+    s.textContent = '';
+    s.appendChild(RF.el('h2', { text: 'Order summary' }));
+    state.lines.forEach(function (l) {
+      s.appendChild(RF.el('div', { class: 'sum-row' },
+        RF.el('span', { text: l.qty + ' × ' + l.product.name + (l.variant ? ' (' + l.variant + ')' : '') }),
+        RF.el('span', { text: RF.peso(l.product.price * l.qty) })));
+    });
+    // re-check voucher rule if the cart changed
+    if (state.discount && state.sub < RF.VOUCHER.minSpend) state.discount = 0;
+    s.appendChild(RF.el('div', { class: 'sum-row' }, RF.el('span', { text: 'Subtotal' }), RF.el('span', { text: RF.peso(state.sub) })));
+    if (state.discount) s.appendChild(RF.el('div', { class: 'sum-row' }, RF.el('span', { text: 'Voucher ' + RF.VOUCHER.code }), RF.el('span', { text: '-' + RF.peso(state.discount) })));
+    var ship = shipping();
+    s.appendChild(RF.el('div', { class: 'sum-row' }, RF.el('span', { text: 'Shipping' }),
+      ship === 0 ? RF.el('span', { class: 'free', text: 'Free' }) : RF.el('span', { text: RF.peso(ship) })));
+    s.appendChild(RF.el('div', { class: 'sum-row total' }, RF.el('span', { text: 'Total' }), RF.el('span', { text: RF.peso(total()) })));
+    refreshMethods();
+  }
+
+  function applyVoucher() {
+    var code = els.voucher.value.trim().toUpperCase();
+    els.voucherMsg.className = 'voucher-msg';
+    if (!code) { els.voucherMsg.textContent = ''; state.discount = 0; refreshSummary(); return; }
+    if (code !== RF.VOUCHER.code) {
+      state.discount = 0;
+      els.voucherMsg.textContent = 'That code is not valid.';
+      els.voucherMsg.className = 'voucher-msg bad';
+    } else if (state.sub < RF.VOUCHER.minSpend) {
+      state.discount = 0;
+      els.voucherMsg.textContent = RF.VOUCHER.code + ' needs a subtotal of ' + RF.peso(RF.VOUCHER.minSpend) + ' or more.';
+      els.voucherMsg.className = 'voucher-msg bad';
+    } else {
+      state.discount = RF.VOUCHER.off;
+      els.voucherMsg.textContent = RF.peso(RF.VOUCHER.off) + ' off applied.';
+      els.voucherMsg.className = 'voucher-msg ok';
+    }
+    refreshSummary();
+  }
+
+  function submit(ev) {
+    ev.preventDefault();
+    var form = ev.target;
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    var ref = 'RF-' + (1024 + Math.floor(Math.random() * 8900));
+    var amt = total();
+    var method = state.method;
+    var methodLabel = { gcash: 'GCash (demo)', bank: 'Bank transfer (demo)', cod: 'Cash on delivery' }[method];
+    try {
+      // Only the reference, amount and method are kept. No name, phone or address is stored.
+      localStorage.setItem(ORDER_KEY, JSON.stringify({ ref: ref, amount: amt, method: method, at: new Date().toISOString() }));
+    } catch (e) { /* storage blocked, fine for a demo */ }
+    RF.clearCart();
+    if (method === 'gcash') {
+      location.href = 'pay.html?order=' + encodeURIComponent(ref) + '&amt=' + encodeURIComponent(String(amt));
+      return;
+    }
+    root.textContent = '';
+    root.appendChild(RF.el('div', { class: 'panel' },
+      RF.el('h2', { text: 'Order placed (demo)' }),
+      RF.el('p', { text: 'Order reference ' + ref + ', total ' + RF.peso(amt) + ', ' + methodLabel + '.' }),
+      RF.el('p', { class: 'note', text: method === 'cod' ? 'You would pay the rider on delivery.' : 'In a real shop, bank details would be sent next. This is a demo, so nothing happens.' }),
+      RF.el('a', { class: 'btn', href: 'index.html', text: 'Back to the shop' })));
+  }
+})();
+</script>
+<footer class="site-footer">
+  Raph Finds is a mock shop built for a sales demo. Products, prices, policies and payments are invented. Nothing you enter here is sent anywhere.
+</footer>
+</body>
+</html>
